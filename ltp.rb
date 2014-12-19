@@ -18,6 +18,10 @@ class LTPOptionParser
 				options[:verbose] = v
 			end
 
+			opts.on("-f", "Path to TeX (.tex) file") do |v|
+				options[:filename] = v
+			end
+
 			# TODO: add other options as needed
 
 			opts.on_tail("--version", "Show version") do
