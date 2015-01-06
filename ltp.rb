@@ -8,9 +8,8 @@
 require 'optparse'
 
 class LTPOptionParser
-	options = {}
-
 	def self.parse(args)
+		options = {}
 		OptionParser.new do |opts|
 			opts.banner = "Usage: ltp.rb [options]"
 
@@ -18,7 +17,7 @@ class LTPOptionParser
 				options[:verbose] = v
 			end
 
-			opts.on("-f", "Path to TeX (.tex) file") do |v|
+			opts.on("-fFILENAME", "Path to TeX (.tex) file") do |v|
 				options[:filename] = v
 			end
 
@@ -34,7 +33,20 @@ class LTPOptionParser
 	end
 end
 
-options = LTPOptionParser.parse(ARGV)
-puts options[:verbose]
+# RE
+# \\\S+{\S+}
+# \\\S+
+# %(\S|\s)*  
+def tex_to_txt(fname)
+	plaintext = ""
+	File.open(fname, "r").each_line do |line|
+		newline = line.gsub(/\\\S+{(\s|\S)+}/,'').gsub(/\\\S+/, '').gsub(/%(\S|\s)*/,'').strip()
+		plaintext = plaintext + newline
+	end
+	puts plaintext
+end
 
-# handle = File.open(options["filename"], "r")
+options = LTPOptionParser.parse(ARGV)
+tex_to_txt(options[:filename])
+
+# usage: ruby ltp.rb -f ~/Dropbox/PhD/Papers/AC3N15/ac3n14.tex
